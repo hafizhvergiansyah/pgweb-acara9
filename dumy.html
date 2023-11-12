@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leaflet Map</title>
+    <title>WEB GIS SLEMAN</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -17,7 +17,7 @@
       rel="stylesheet"
       href="assets/plugins/leaflet-markercluster/MarkerCluster.Default.css"
     />
-    <!--Routing-->
+    <!-- Routing -->
     <link
       rel="stylesheet"
       href="assets/plugins/leaflet-routing/leaflet-routing-machine.css"
@@ -72,38 +72,27 @@
   <body>
     <div id="map"></div>
 
-    <!-- Marker Cluster -->
-    <script src="assets/plugins/leaflet-markercluster/leaflet.markercluster.js"></script>
-    <script src="assets/plugins/leaflet-markercluster/leaflet.markercluster-src.js"></script>
+    <!-- Include your GeoJSON data -->
+    <script src="./data.js"></script>
+
+    <!-- Leaflet and Plugins -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <!--Routing-->
+    <script src="assets/plugins/leaflet-markercluster/leaflet.markercluster.js"></script>
+    <script src="assets/plugins/leaflet-markercluster/leaflet.markercluster-src.js"></script>
     <script src="assets/plugins/leaflet-routing/leaflet-routing-machine.js"></script>
     <script src="assets/plugins/leaflet-routing/leaflet-routing-machine.min.js"></script>
-    <!-- Search JavaScript Library -->
     <script src="assets/plugins/leaflet-search/leaflet-search.js"></script>
-    <!-- Geolocation Javascript Library -->
     <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
-    <!-- Leaflet Mouse Position JavaScript Library -->
     <script src="assets/plugins/leaflet-mouseposition/L.Control.MousePosition.js"></script>
-    <!-- Leaflet Measure JavaScript Library -->
     <script src="assets/plugins/leaflet-measure/leaflet-measure.js"></script>
-    <!-- EasyPrint JavaScript Library -->
     <script src="assets/plugins/leaflet-easyprint/leaflet.easyPrint.js"></script>
 
     <script>
-      //inisianilasi variabel
+      // Initialize variables
       var wfsgeoserver1 = L.geoJson(null, {
         pointToLayer: function (feature, latlng) {
-          return L.marker(latlng, {
-            // icon: L.icon({
-            //   iconUrl: "assets/img/marker/fas_rumahsakit_rujukan.png",
-            //   iconSize: [32, 32],
-            //   iconAnchor: [16, 32],
-            //   popupAnchor: [0, -32],
-            //   tooltipAnchor: [16, -20]
-            // })
-          });
+          return L.marker(latlng);
         },
         onEachFeature: function (feature, layer) {
           var content =
@@ -136,10 +125,38 @@
         wfsgeoserver1.addTo(map);
         map.fitBounds(wfsgeoserver1.getBounds());
       });
-      // Inisialisasi Peta
+
+      // Initialize the map
       var map = L.map("map").setView([-7.7956, 110.3695], 10);
 
-      // Judul
+      // Array of markers
+      var markersArray = [
+        {
+          coordinates: [-7.766715, 110.37746],
+          options: { draggable: true },
+          popupContent: "Gedung B DIVSIG UGM",
+        },
+        {
+          coordinates: [-7.743168, 110.350276],
+          options: {},
+          popupContent: "RS.Akademik UGM",
+        },
+      ];
+
+      // // Add GeoJSON data to the map
+      // L.geoJson(data).addTo(map);
+
+      // // Create a marker cluster group
+      // var markers = L.markerClusterGroup();
+
+      // // Add markers to the cluster group
+      // markersArray.forEach(function (markerInfo) {
+      //   var marker = L.marker(markerInfo.coordinates, markerInfo.options);
+      //   marker.addTo(markers);
+      //   marker.bindPopup(markerInfo.popupContent);
+      // });
+
+      // Title
       var title = new L.Control();
       title.onAdd = function (map) {
         this._div = L.DomUtil.create("div", "info");
@@ -148,16 +165,32 @@
       };
       title.update = function () {
         this._div.innerHTML =
-          "<h2>LATIHAN WEBGIS | JUMLAH PENDUDUK KAB. SLEMAN</h2>MATAKULIAH PEMROGRAMAN SPASIAL : WEB";
+          "<h2>WEBGIS | PERSEBARAN FASKES & JUMLAH PENDUDUK KAB. SLEMAN</h2>MATAKULIAH PEMROGRAMAN SPASIAL : WEB";
       };
       title.addTo(map);
 
-      // Legenda
+      <!-- Watermark -->
+      L.Control.Watermark = L.Control.extend({
+        onAdd: function (map) {
+          var container = L.DomUtil.create("div", "leaflet-control-watermark");
+          var img = L.DomUtil.create("img", "watermark-image");
+          img.src = "assets/img/logo/HV.png";
+          img.style.width = "90px";
+          container.appendChild(img);
+          return container;
+        },
+      });
+      L.control.watermark = function (opts) {
+        return new L.Control.Watermark(opts);
+      };
+
+      L.control.watermark({ position: "bottomleft" }).addTo(map);
+      // Legend
       L.Control.Legend = L.Control.extend({
         onAdd: function (map) {
           var img = L.DomUtil.create("img");
-          img.src = "assets/img/legend/legend.png";
-          img.style.width = "150px";
+          img.src = "assets/img/legend/legend123.png";
+          img.style.width = "250px";
           return img;
         },
       });
@@ -166,34 +199,13 @@
       };
 
       L.control.Legend({ position: "bottomleft" }).addTo(map);
-
-      // Watermark
-      L.Control.Watermark = L.Control.extend({
-        onAdd: function (map) {
-          var img = L.DomUtil.create("img");
-          img.src = "assets/img/logo/HV.png";
-          img.style.width = "120px";
-          return img;
-        },
-      });
-      L.control.watermark = function (opts) {
-        return new L.Control.Watermark(opts);
-      };
-
-      L.control.watermark({ position: "bottomleft" }).addTo(map);
-
-      // Basemap
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution:
-          'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-
+      // Basemaps
       var basemap1 = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
+          maxZoom: 19,
           attribution:
-            '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="DIVSIGUGM" target="_blank">DIVSIG UGM</a>',
+            'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }
       );
 
@@ -201,7 +213,7 @@
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
         {
           attribution:
-            'Tiles &copy; Esri | <a href="Latihan WebGIS" target="_blank">DIVSIG UGM</a>',
+            'Tiles &copy; Esri | <a href="DIVSIGUGM" target="_blank">DIVSIG UGM</a>',
         }
       );
 
@@ -235,14 +247,15 @@
       // Plugin Search
       var searchControl = new L.Control.Search({
         position: "topleft",
-        layer: wfsgeoserver1, //Nama variabel layer
-        propertyName: "kecamatan", //Field untuk pencarian
+        layer: wfsgeoserver1, // Nama variabel layer
+        propertyName: "kecamatan", // Field untuk pencarian
         marker: false,
         moveToLocation: function (latlng, title, map) {
           var zoom = map.getBoundsZoom(latlng.layer.getBounds());
           map.setView(latlng, zoom);
         },
       });
+
       searchControl
         .on("search:locationfound", function (e) {
           e.layer.setStyle({
@@ -251,13 +264,14 @@
           });
         })
         .on("search:collapse", function (e) {
-          featuresLayer.eachLayer(function (layer) {
-            featuresLayer.resetStyle(layer);
+          wfsgeoserver1.eachLayer(function (layer) {
+            wfsgeoserver1.resetStyle(layer);
           });
         });
+
       map.addControl(searchControl);
 
-      /*Plugin Geolocation */
+      // Plugin Geolocation
       var locateControl = L.control
         .locate({
           position: "topleft",
@@ -291,7 +305,7 @@
         })
         .addTo(map);
 
-      /*Plugin Mouse Position Coordinate */
+      // Plugin Mouse Position Coordinate
       L.control
         .mousePosition({
           position: "bottomright",
@@ -300,7 +314,7 @@
         })
         .addTo(map);
 
-      /*Plugin Measurement Tool */
+      // Plugin Measurement Tool
       var measureControl = new L.Control.Measure({
         position: "topleft",
         primaryLengthUnit: "meters",
@@ -310,14 +324,15 @@
         activeColor: "#FF0000",
         completedColor: "#00FF00",
       });
+
       measureControl.addTo(map);
 
-      /*Plugin EasyPrint */
+      // Plugin EasyPrint
       L.easyPrint({
         title: "Print",
       }).addTo(map);
 
-      /*plugin Routing*/
+      // Plugin Routing
       L.Routing.control({
         waypoints: [
           L.latLng(-7.774876989477508, 110.3746770621709),
@@ -326,10 +341,18 @@
         routeWhileDragging: true,
       }).addTo(map);
 
-      /*Layer Marker*/
+      // Layer Marker
       var addressPoints = [
-        [-7.7256681, 110.3830948, "Monjali"],
         [-7.743168, 110.350276, "RS. Akademik UGM"],
+        [-7.76793579, 110.37344753, "RSUP DR. SARDJITO"],
+        [-7.6868787, 110.3418979, "RSUD SLEMAN"],
+        [-7.80463845, 110.48315058, "RSUD PRAMBANAN"],
+        [-7.7579961, 110.40298259, "RS JOGJAKARTA INTERNATIONAL HOSPITAL"],
+        [-7.77215716, 110.46674543, "RS SAKINA IDAMAN"],
+        [-7.80040581, 110.31771053, "RS PKU MUHAMMADIYAH GAMPING"],
+        [-7.76621198, 110.47182333, "RS BHAYANGKARA"],
+        [-7.74315832, 110.35038863, "RS AKADEMIK UGM"],
+        [-7.77025159, 110.43276472, "RS HERMINA"],
       ];
 
       var markers = L.markerClusterGroup();
@@ -337,10 +360,10 @@
       for (var i = 0; i < addressPoints.length; i++) {
         var a = addressPoints[i];
         var title1 = a[2];
-        var marker = L.marker(new L.latlng(a[0], a[1], { title: title1 }));
+        var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title1 });
 
         marker.bindPopup(title1);
-        markers.addLayer(marker); // Use markers.addLayer() instead of marker.addLayer()
+        markers.addLayer(marker);
       }
 
       map.addLayer(markers);
