@@ -105,6 +105,7 @@ var baseMaps = {
         }
             $conn->close();
     ?>
+    
     </script>
    
 
