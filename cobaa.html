@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WEB GIS KAB.SLEMAN</title>
+    <title>WEB GIS SLEMAN</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -55,8 +55,8 @@
       .info {
         padding: 6px 8px;
         font: 14px/16px Arial, Helvetica, sans-serif;
-        background: rgb(255, 255, 255);
-        background: rgba(247, 58, 58, 0.8);
+        background: white;
+        background: rgba(255, 255, 255, 0.8);
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         border-radius: 5px;
         text-align: center;
@@ -64,7 +64,7 @@
 
       .info h2 {
         margin: 0 0 5px;
-        color: #fff7f7;
+        color: #777;
       }
     </style>
   </head>
@@ -132,7 +132,7 @@
       });
 
       // Fetch GeoJSON data from geoserver.php
-      $.getJSON("geoserver.php", function (data) {
+      $.getJSON("acara10_2.php", function (data) {
         wfsgeoserver1.addData(data);
         wfsgeoserver1.addTo(map);
         map.fitBounds(wfsgeoserver1.getBounds());
@@ -174,7 +174,7 @@
       };
       title.update = function () {
         this._div.innerHTML =
-          "<h2>WEBGIS | PERSEBARAN KOPERASI & JUMLAH PENDUDUK KAB. SLEMAN</h2>MATAKULIAH PEMROGRAMAN SPASIAL : WEB";
+          "<h2>WEBGIS | PERSEBARAN FASKES & JUMLAH PENDUDUK KAB. SLEMAN</h2>MATAKULIAH PEMROGRAMAN SPASIAL : WEB";
       };
       title.addTo(map);
 
@@ -183,7 +183,7 @@
         onAdd: function (map) {
           var container = L.DomUtil.create("div", "leaflet-control-watermark");
           var img = L.DomUtil.create("img", "watermark-image");
-          img.src = "assets/img/logo/HV.png";
+          img.src = "assets/img/logo/LOGO_SIG_BLUE.png";
           img.style.width = "90px";
           container.appendChild(img);
           return container;
@@ -198,8 +198,8 @@
       L.Control.Legend = L.Control.extend({
         onAdd: function (map) {
           var img = L.DomUtil.create("img");
-          img.src = "assets/img/legend/fix.png";
-          img.style.width = "150px";
+          img.src = "assets/img/legend/legenda.png";
+          img.style.width = "250px";
           return img;
         },
       });
@@ -265,38 +265,17 @@
         },
       });
 
-      // Search control
-      var lastSelectedLayer;
-
-      var searchControl = new L.Control.Search({
-        position: "topleft",
-        layer: wfsgeoserver1,
-        propertyName: "kecamatan",
-        marker: false,
-        moveToLocation: function (latlng, title, map) {
-          var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-          map.setView(latlng, zoom);
-        },
-      });
-
       searchControl
         .on("search:locationfound", function (e) {
-          if (lastSelectedLayer) {
-            wfsgeoserver1.resetStyle(lastSelectedLayer);
-          }
-
           e.layer.setStyle({
             fillColor: "#ffff00",
             color: "#0000ff",
           });
-
-          lastSelectedLayer = e.layer;
         })
         .on("search:collapse", function (e) {
-          if (lastSelectedLayer) {
-            wfsgeoserver1.resetStyle(lastSelectedLayer);
-            lastSelectedLayer = null;
-          }
+          wfsgeoserver1.eachLayer(function (layer) {
+            wfsgeoserver1.resetStyle(layer);
+          });
         });
 
       map.addControl(searchControl);
@@ -373,65 +352,77 @@
 
       // Layer Marker
       var addressPoints = [
-        [-7.719642050936832, 110.38148321519144, "KSU Setia Amanah"],
-        [-7.719720300422866, 110.38122805526985, "Koperasi Kredit Karsani"],
-        [-7.699019943849143, 110.35778069570673, "Gudang KUD Minggir"],
-        [-7.718512991814398, 110.38057205899843, "Koperasi CU Satu Hati"],
-        [-7.730108424618057, 110.39382853343925, "KUD Tabi Manunggal"],
-        [-7.739636148301019, 110.401895366782, "Koperasi Prima Artha"],
-        [-7.728129715816229, 110.39249597340992, "KUD"],
-        [-7.726733145214015, 110.38987186696794, "Koperasi Prima Artha"],
-        [-7.695910161047789, 110.35551679614842, "Koperasi Cinde Laras"],
-        [-7.713249424827166, 110.34503449835678, "KUD Moyudan"],
-        [-7.688168474914577, 110.32248096154938, "KUD Godean I"],
-        [-7.704554861176866, 110.33821542695492, "Koperasi Tahu Tempe"],
-        [-7.666347775677719, 110.30083494236111, "Koperasi"],
-        [-7.670899890923635, 110.30530774242758, "Koperasi Pangestu"],
-        [-7.672371732019048, 110.30759426961674, "Koperasi Bina Insani"],
-        [-7.752296411482872, 110.41836735115032, "KPRI Mekar"],
-        [-7.77369759590261, 110.45025164623104, "Koperasi Perpamdes"],
-        [-7.767065850120761, 110.44718896345084, "Koperasi GKBI"],
-        [-7.692331729664652, 110.3824762666031, "Kopma UGM"],
-        [-7.693453326496654, 110.38374163326123, "Kopma UNY"],
-        [-7.676485920256154, 110.37042663530834, "Koperasi BPM"],
-        [-7.675890275086956, 110.37289615849695, "KUD Bandung Bondowoso"],
-        [-7.674623134644913, 110.3659750428732, "Gudang KUD"],
-        [-7.680663670445468, 110.37817265401503, "KSP Setia Kawan"],
-        [-7.685481695816002, 110.38599102906298, "Koperasi Simpan Pinjam"],
-        [-7.676987491993394, 110.3677769878306, "KSU Forsitama"],
-        [-7.677024953801705, 110.37436740803754, "KUD Berbah"],
-        [-7.664005559392687, 110.3623316173771, "KUD Berbah"],
-        [-7.773140597057548, 110.45093270486562, "Koperasi Sutra Alam Merapi"],
-        [-7.699913164677238, 110.34794035497492, "KUD Makmur"],
-        [-7.708090078739049, 110.36501093383413, "Koperasi"],
-        [-7.703410088055141, 110.35765060916545, "Koperasi Kalibening"],
-        [-7.708985043989383, 110.3659924171302, "Koperasi Bendan"],
-        [-7.736174715390767, 110.61678977255014, "KUD Turi"],
-        [-7.738050553086258, 110.61952601526066, "Koperasi Sekar Melati"],
-        [-7.748129760432944, 110.6344954931981, "Koperasi Merapi Mulia"],
-        [-7.687392201473123, 110.39549385421814, "Koperasi Unit Desa"],
-        [-7.773503290310974, 110.63149516429044, "Koperasi BMT"],
+        [-7.743168, 110.350276, "RS. Akademik UGM"],
+        [-7.76793579, 110.37344753, "RSUP DR. SARDJITO"],
+        [-7.6868787, 110.3418979, "RSUD SLEMAN"],
+        [-7.80463845, 110.48315058, "RSUD PRAMBANAN"],
+        [-7.7579961, 110.40298259, "RS JOGJAKARTA INTERNATIONAL HOSPITAL"],
+        [-7.77215716, 110.46674543, "RS SAKINA IDAMAN"],
+        [-7.80040581, 110.31771053, "RS PKU MUHAMMADIYAH GAMPING"],
+        [-7.76621198, 110.47182333, "RS BHAYANGKARA"],
+        [-7.74315832, 110.35038863, "RS AKADEMIK UGM"],
+        [-7.77025159, 110.43276472, "RS HERMINA"],
+      ];
+
+      var addressPoints = [
+        [
+          -7.766122737090606,
+          110.38225742883432,
+          "Ayam Pak Wage",
+          "clinic.png",
+          "chicken.png",
+        ],
+        [
+          -7.664542383612415,
+          110.42124279682808,
+          "Kopi Klotok",
+          "hospital.png",
+          "coffee.png",
+        ],
       ];
 
       var markers = L.markerClusterGroup();
 
       for (var i = 0; i < addressPoints.length; i++) {
         var a = addressPoints[i];
-        var title1 = a[2];
-        var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title1 });
+        var lat = a[0];
+        var lon = a[1];
+        var title = a[2];
+        var iconUrl = a[3];
+        var imageUrl = a[4];
 
-        marker.bindPopup(title1);
+        var marker = L.marker(new L.LatLng(lat, lon), {
+          title: title,
+          icon: L.icon({
+            iconUrl: iconUrl,
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30],
+          }),
+        });
+
+        // Buat konten HTML untuk popup
+        var popupContent =
+          "<p><strong>" +
+          title +
+          "</strong></p>" +
+          "<img src='" +
+          imageUrl +
+          "' width='100'>";
+
+        marker.bindPopup(popupContent);
         markers.addLayer(marker);
       }
 
       map.addLayer(markers);
+
       // Function to determine the color based on the 'value' attribute
       function getColor(value) {
         return value > 75000
           ? "#67000d"
           : value > 50000
           ? "#fb7050"
-          : value > 1
+          : value > 10
           ? "#fff5f0"
           : "#fff5f0";
       }
